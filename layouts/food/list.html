@@ -5,22 +5,6 @@
     margin: 0 auto;
   }
 
-  .filter-controls {
-    margin-bottom: 40px;
-    padding: 10px 0;
-  }
-
-  .filter-bar {
-    margin-bottom: 15px;
-  }
-
-  /* Override colors for Food section */
-  .filter-bar input:focus,
-  .filter-bar select:focus {
-    border-color: var(--orange);
-    box-shadow: 0 0 10px rgba(255, 189, 94, 0.2);
-  }
-
   .tag-filter-btn:hover {
     border-color: var(--orange);
     color: var(--orange);
@@ -95,156 +79,40 @@
   }
 </style>
 
-<div class="feed-container">
-  <h1>{{ .Title }} Feed</h1>
+<h1>{{ .Title }} Feed</h1>
 
-  <div class="filter-controls">
-    <div class="filter-bar">
-      <input type="text" id="search-input" placeholder="Search...">
+{{ partial "list-filter.html" (dict "context" . "containerId" "feed-list" "itemClass" "feed-post") }}
 
-      <select id="sort-select">
-        <option value="date-desc">Newest First</option>
-        <option value="date-asc">Oldest First</option>
-        <option value="title-asc">Title (A-Z)</option>
-        <option value="title-desc">Title (Z-A)</option>
-      </select>
+<div id="feed-list">
+  {{ range .Pages }}
+  {{ $images := .Resources.ByType "image" }}
+
+  <article class="feed-post" data-title="{{ .Title | lower }}" data-content="{{ .Plain | lower }}"
+    data-date="{{ .Date.Unix }}" data-tags="{{ with .Params.tags }}{{ delimit . " ," | lower }}{{ end }}">
+
+    <div class="post-header">
+      <a href="{{ .RelPermalink }}" class="post-title">{{ .Title }}</a>
+      <div class="post-meta">
+        <span>{{ .Date.Format "Jan 02, 2006" }}</span>
+        {{ with .Params.tags }}
+        <span>{{ range . }}#{{ . }} {{ end }}</span>
+        {{ end }}
+      </div>
     </div>
 
-    <div class="tag-filters" id="tag-filters">
-      {{ $tags := slice }}
-      {{ range .Pages }}
-      {{ range .Params.tags }}
-      {{ $tags = $tags | append . }}
-      {{ end }}
-      {{ end }}
-      {{ range ($tags | uniq | sort) }}
-      <div class="tag-filter-btn" data-tag="{{ . | lower }}">{{ . }}</div>
-      {{ end }}
+    {{ if gt (len $images) 0 }}
+    {{$image := index $images 0}}
+    <div class="feed-image">
+      <img src="{{ $image.RelPermalink }}" alt="{{ $image.Name }}" loading="lazy" class="lightbox-trigger"
+        data-full-url="{{ $image.RelPermalink }}">
     </div>
-  </div>
-
-  <div id="feed-list">
-    {{ range .Pages }}
-    {{ $images := .Resources.ByType "image" }}
-
-    <article class="feed-post" data-title="{{ .Title | lower }}" data-content="{{ .Plain | lower }}"
-      data-date="{{ .Date.Unix }}" data-tags="{{ with .Params.tags }}{{ delimit . " ," | lower }}{{ end }}">
-
-      <div class="post-header">
-        <a href="{{ .RelPermalink }}" class="post-title">{{ .Title }}</a>
-        <div class="post-meta">
-          <span>{{ .Date.Format "Jan 02, 2006" }}</span>
-          {{ with .Params.tags }}
-          <span>{{ range . }}#{{ . }} {{ end }}</span>
-          {{ end }}
-        </div>
-      </div>
-
-      <!-- Image Gallery -->
-      {{ if gt (len $images) 0 }}
-      {{$image := index $images 0}}
-      <div class="feed-image">
-        <img src="{{ $image.RelPermalink }}" alt="{{ $image.Name }}" loading="lazy" class="lightbox-trigger"
-          data-full-url="{{ $image.RelPermalink }}">
-      </div>
-      {{ end }}
-      <!---->
-      <!-- <div class="post-summary"> -->
-      <!--   {{ .Summary | plainify | truncate 200 }} -->
-      <!--   <br> -->
-      <!--   <a href="{{ .RelPermalink }}" class="read-more-link">Read full post &rarr;</a> -->
-      <!-- </div> -->
-    </article>
     {{ end }}
-  </div>
-
-  <div id="no-results" class="no-results">
-    No posts found.
-  </div>
+  </article>
+  {{ end }}
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('search-input');
-    const sortSelect = document.getElementById('sort-select');
-    const tagFilters = document.getElementById('tag-filters');
-    const tagBtns = Array.from(tagFilters.getElementsByClassName('tag-filter-btn'));
-    const feedList = document.getElementById('feed-list');
-    const posts = Array.from(feedList.getElementsByClassName('feed-post'));
-    const noResults = document.getElementById('no-results');
-
-    let selectedTags = new Set();
-
-    function filterAndSort() {
-      const searchTerm = searchInput.value.toLowerCase();
-      const sortValue = sortSelect.value;
-
-      let visibleCount = 0;
-
-      posts.forEach(post => {
-        const title = post.dataset.title;
-        const content = post.dataset.content;
-        const tags = post.dataset.tags ? post.dataset.tags.split(',').map(t => t.trim()) : [];
-
-        const matchesSearch = title.includes(searchTerm) || content.includes(searchTerm);
-
-        let matchesTags = true;
-        if (selectedTags.size > 0) {
-          for (let tag of selectedTags) {
-            if (!tags.includes(tag)) {
-              matchesTags = false;
-              break;
-            }
-          }
-        }
-
-        if (matchesSearch && matchesTags) {
-          post.style.display = 'block';
-          visibleCount++;
-        } else {
-          post.style.display = 'none';
-        }
-      });
-
-      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
-
-      const visiblePosts = posts.filter(post => post.style.display !== 'none');
-
-      visiblePosts.sort((a, b) => {
-        if (sortValue === 'date-desc') {
-          return b.dataset.date - a.dataset.date;
-        } else if (sortValue === 'date-asc') {
-          return a.dataset.date - b.dataset.date;
-        } else if (sortValue === 'title-asc') {
-          return a.dataset.title.localeCompare(b.dataset.title);
-        } else if (sortValue === 'title-desc') {
-          return b.dataset.title.localeCompare(a.dataset.title);
-        }
-        return 0;
-      });
-
-      visiblePosts.forEach(post => feedList.appendChild(post));
-    }
-
-    searchInput.addEventListener('input', filterAndSort);
-    sortSelect.addEventListener('change', filterAndSort);
-
-    tagBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tag = btn.dataset.tag;
-        if (selectedTags.has(tag)) {
-          selectedTags.delete(tag);
-          btn.classList.remove('active');
-        } else {
-          selectedTags.add(tag);
-          btn.classList.add('active');
-        }
-        filterAndSort();
-      });
-    });
-
-    // Initial sort
-    filterAndSort();
-  });
-</script>
+<div id="no-results" class="no-results">
+  No posts found.
+</div>
+</div>
 {{ end }}

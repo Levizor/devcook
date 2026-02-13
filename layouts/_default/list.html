@@ -94,32 +94,11 @@
 
 <h1>{{ .Title }}</h1>
 
-<div class="filter-bar">
-  <input type="text" id="search-input" placeholder="Search pages...">
-
-  <select id="sort-select">
-    <option value="date-desc">Newest First</option>
-    <option value="date-asc">Oldest First</option>
-    <option value="title-asc">Title (A-Z)</option>
-    <option value="title-desc">Title (Z-A)</option>
-  </select>
-</div>
-
-<div class="tag-filters" id="tag-filters">
-  {{ $tags := slice }}
-  {{ range .Pages }}
-  {{ range .Params.tags }}
-  {{ $tags = $tags | append . }}
-  {{ end }}
-  {{ end }}
-  {{ range ($tags | uniq | sort) }}
-  <div class="tag-filter-btn" data-tag="{{ . | lower }}">{{ . }}</div>
-  {{ end }}
-</div>
+{{ partial "list-filter.html" (dict "context" . "containerId" "post-list" "itemClass" "post-item") }}
 
 <ul id="post-list">
   {{ range .Pages }}
-  <li class="post-item" data-title="{{ .Title | lower }}" data-date="{{ .Date.Unix }}"
+  <li class="post-item" data-title="{{ .Title | lower }}" data-content="{{ .Summary | plainify | lower }}" data-date="{{ .Date.Unix }}"
     data-tags="{{ with .Params.tags }}{{ delimit . " ," | lower }}{{ end }}">
 
     <div class="post-header">
@@ -147,84 +126,4 @@
 </ul>
 
 <div id="no-results" class="no-results">No posts found matching your criteria.</div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('search-input');
-    const sortSelect = document.getElementById('sort-select');
-    const tagFilters = document.getElementById('tag-filters');
-    const tagBtns = Array.from(tagFilters.getElementsByClassName('tag-filter-btn'));
-    const postList = document.getElementById('post-list');
-    const items = Array.from(postList.getElementsByClassName('post-item'));
-    const noResults = document.getElementById('no-results');
-
-    let selectedTags = new Set();
-
-    function filterAndSort() {
-      const searchTerm = searchInput.value.toLowerCase();
-      const sortValue = sortSelect.value;
-
-      let visibleCount = 0;
-      items.forEach(item => {
-        const title = item.dataset.title;
-        const tags = item.dataset.tags ? item.dataset.tags.split(',').map(t => t.trim()) : [];
-
-        const matchesSearch = title.includes(searchTerm);
-
-        let matchesTags = true;
-        if (selectedTags.size > 0) {
-          for (let tag of selectedTags) {
-            if (!tags.includes(tag)) {
-              matchesTags = false;
-              break;
-            }
-          }
-        }
-
-        if (matchesSearch && matchesTags) {
-          item.style.display = 'flex';
-          visibleCount++;
-        } else {
-          item.style.display = 'none';
-        }
-      });
-
-      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
-
-      const visibleItems = items.filter(item => item.style.display !== 'none');
-
-      visibleItems.sort((a, b) => {
-        if (sortValue === 'date-desc') {
-          return b.dataset.date - a.dataset.date;
-        } else if (sortValue === 'date-asc') {
-          return a.dataset.date - b.dataset.date;
-        } else if (sortValue === 'title-asc') {
-          return a.dataset.title.localeCompare(b.dataset.title);
-        } else if (sortValue === 'title-desc') {
-          return b.dataset.title.localeCompare(a.dataset.title);
-        }
-        return 0;
-      });
-
-      visibleItems.forEach(item => postList.appendChild(item));
-    }
-
-    searchInput.addEventListener('input', filterAndSort);
-    sortSelect.addEventListener('change', filterAndSort);
-
-    tagBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tag = btn.dataset.tag;
-        if (selectedTags.has(tag)) {
-          selectedTags.delete(tag);
-          btn.classList.remove('active');
-        } else {
-          selectedTags.add(tag);
-          btn.classList.add('active');
-        }
-        filterAndSort();
-      });
-    });
-  });
-</script>
 {{ end }}
