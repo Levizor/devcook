@@ -14,3 +14,7 @@ identifier = "food"
 name = "Food"
 url = "/food/"
 weight = 20
+
+[params]
+description = "Levizor's personal website."
+images = ["profile.png"]
