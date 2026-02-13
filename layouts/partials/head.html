@@ -9,6 +9,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -76,6 +79,13 @@
       transition: background-color 0.3s, color 0.3s;
     }
 
+    /* Content Font Override */
+    .post-content,
+    .post-summary,
+    .post-description {
+      font-family: 'Open Sans', sans-serif;
+    }
+
     nav {
       margin-bottom: 40px;
       border-bottom: 1px solid var(--bg-highlight);
@@ -100,6 +110,7 @@
 
     main a {
       color: var(--orange);
+      text-decoration: none;
     }
 
     main {
@@ -203,6 +214,80 @@
 
     .lightbox-trigger:hover {
       transform: scale(1.02);
+    }
+
+    /* Shared Filter & Search Styles */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-bar input,
+    .filter-bar select {
+      padding: 8px 12px;
+      border: 1px solid var(--bg-highlight);
+      background-color: var(--bg-alt);
+      color: var(--fg);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .filter-bar input {
+      flex-grow: 1;
+      min-width: 200px;
+    }
+
+    .filter-bar select {
+      cursor: pointer;
+      min-width: 150px;
+    }
+
+    .filter-bar input:focus,
+    .filter-bar select:focus {
+      border-color: var(--blue);
+    }
+
+    .tag-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .tag-filter-btn {
+      cursor: pointer;
+      padding: 6px 12px;
+      border: 1px solid var(--bg-highlight);
+      border-radius: 4px;
+      background-color: var(--bg-alt);
+      color: var(--fg);
+      font-size: 0.85em;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .tag-filter-btn:hover {
+      border-color: var(--blue);
+    }
+
+    .tag-filter-btn.active {
+      background-color: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+
+    .no-results {
+      padding: 20px;
+      text-align: center;
+      color: var(--grey);
+      font-style: italic;
+      display: none;
     }
   </style>
 </head>
