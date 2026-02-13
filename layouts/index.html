@@ -98,13 +98,29 @@
     background-color: var(--bg-alt);
     color: var(--green);
   }
+
+  @media (max-width: 768px) {
+    .hero {
+      margin-top: 30px;
+      margin-bottom: 30px;
+    }
+
+    .hero h1 {
+      font-size: 1.8em;
+    }
+
+    .links-section {
+      gap: 20px;
+      margin-top: 20px;
+    }
+  }
 </style>
 <div class="hero">
   {{ $img := resources.Get "profile.png" }}
   {{ if $img }}
   <img src="{{ $img.RelPermalink }}" alt="Profile" class="profile-pic">
   {{ end }}
-  <h1>¯\_ (~_~) _/¯</h1>
+  <h1>¯\_(~_~)_/¯</h1>
   <p>
     Greetings, this is Levizor.
     <br>
