@@ -1,0 +1,208 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  {{ template "_internal/opengraph.html" . }}
+  {{ template "_internal/twitter_cards.html" . }}
+
+  <title>{{ .Title }} | {{ .Site.Title }}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" href="/favicon.ico">
+
+  <script>
+    (function () {
+      const currentTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+      if (currentTheme) {
+        document.documentElement.setAttribute("data-theme", currentTheme);
+      } else if (prefersDark.matches) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+  <style>
+    :root {
+      --bg: #16181a;
+      --bg-alt: #1e2124;
+      --bg-highlight: #3c4048;
+      --fg: #ffffff;
+      --grey: #7b8496;
+      --green: #5eff6c;
+      --blue: #5ea1ff;
+      --cyan: #5ef1ff;
+      --red: #ff6e5e;
+      --yellow: #f1ff5e;
+      --magenta: #ff5ef1;
+      --pink: #ff5ea0;
+      --orange: #ffbd5e;
+      --purple: #bd5eff;
+    }
+
+    [data-theme="light"] {
+      --bg: #ffffff;
+      --bg-alt: #eaeaea;
+      --bg-highlight: #acacac;
+      --fg: #16181a;
+      --grey: #7b8496;
+      --blue: #0057d1;
+      --green: #008b0c;
+      --cyan: #008c99;
+      --red: #d11500;
+      --yellow: #997b00;
+      --magenta: #d100bf;
+      --pink: #f40064;
+      --orange: #d17c00;
+      --purple: #a018ff;
+    }
+
+    body {
+      font-size: 1.4em;
+      max-width: 80ch;
+      margin: 40px auto;
+      padding: 0 10px;
+      font-family: monospace;
+      line-height: 1.6;
+      background-color: var(--bg);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    nav {
+      margin-bottom: 40px;
+      border-bottom: 1px solid var(--bg-highlight);
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+      min-height: 2.5em;
+    }
+
+    nav div {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    nav a {
+      margin-right: 15px;
+      text-decoration: none;
+      color: var(--grey);
+      font-weight: bold;
+    }
+
+    main a {
+      color: var(--orange);
+    }
+
+    main {
+      color: var(--fg);
+    }
+
+    h1 {
+      margin-bottom: 5px;
+    }
+
+    #theme-toggle {
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--fg);
+      font-family: monospace;
+      font-size: 1.3em;
+      padding: 0;
+      margin-left: auto;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .meta {
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        max-width: 95%;
+        margin: 20px auto;
+        font-size: 1.1em;
+      }
+
+      nav {
+        flex-wrap: wrap;
+      }
+
+      nav div {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      nav a {
+        margin-right: 10px;
+      }
+    }
+
+    /* Image & Gallery Styles */
+    figure {
+      margin: 20px 0;
+      display: block;
+      text-align: center;
+    }
+
+    figure img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    figcaption {
+      margin-top: 8px;
+      font-style: italic;
+      color: var(--grey);
+      font-size: 0.9em;
+    }
+
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: var(--gallery-align, center);
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .gallery figure {
+      margin: 0;
+      flex: 0 1 var(--gallery-item-min-width, 200px);
+      width: var(--gallery-item-min-width, 200px);
+      max-width: 100%;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      aspect-ratio: 1 / 1;
+      border-radius: 8px;
+    }
+
+    .lightbox-trigger {
+      cursor: zoom-in;
+      transition: transform 0.2s;
+    }
+
+    .lightbox-trigger:hover {
+      transform: scale(1.02);
+    }
+  </style>
+</head>

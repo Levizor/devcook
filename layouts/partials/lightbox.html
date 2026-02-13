@@ -1,0 +1,161 @@
+  <style>
+    /* Lightbox Styles */
+    #lightbox {
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    #lightbox.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    #lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      border-radius: 4px;
+      cursor: grab;
+      transform-origin: center center;
+      transition: transform 0.1s ease-out;
+    }
+
+    #lightbox img:active {
+      cursor: grabbing;
+    }
+
+    #lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 40px;
+      color: white;
+      cursor: pointer;
+      z-index: 1001;
+      line-height: 1;
+    }
+  </style>
+
+  <div id="lightbox">
+    <span id="lightbox-close">&times;</span>
+    <img id="lightbox-img" src="" alt="Lightbox Image">
+  </div>
+
+  <script>
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const lightboxClose = document.getElementById("lightbox-close");
+    
+    let scale = 1;
+    let translateX = 0;
+    let translateY = 0;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    function updateTransform() {
+      lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+      document.body.style.overflow = '';
+      scale = 1;
+      translateX = 0;
+      translateY = 0;
+      updateTransform();
+    }
+
+    // Lightbox Open
+    document.addEventListener('click', function (e) {
+      if (e.target.classList.contains('lightbox-trigger')) {
+        const fullUrl = e.target.getAttribute('data-full-url') || e.target.src;
+        lightboxImg.src = fullUrl;
+        lightboxImg.alt = e.target.alt;
+        
+        scale = 1;
+        translateX = 0;
+        translateY = 0;
+        updateTransform();
+        
+        lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+
+    // Close Actions
+    lightboxClose.addEventListener('click', closeLightbox);
+    
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) {
+        closeLightbox();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+        closeLightbox();
+      }
+    });
+
+    // Zoom Logic
+    lightbox.addEventListener('wheel', (e) => {
+      if (!lightbox.classList.contains('active')) return;
+      e.preventDefault();
+
+      const zoomIntensity = 0.1;
+      const direction = e.deltaY < 0 ? 1 : -1;
+      const factor = direction > 0 ? (1 + zoomIntensity) : (1 / (1 + zoomIntensity));
+      
+      const rect = lightboxImg.getBoundingClientRect();
+      // const offsetX = e.clientX - rect.left; // x position within the image
+      // const offsetY = e.clientY - rect.top;  // y position within the image
+
+      const newScale = Math.min(Math.max(0.5, scale * factor), 5);
+      
+      if (newScale !== scale) {
+          const dx = e.clientX - (rect.left + rect.width / 2);
+          const dy = e.clientY - (rect.top + rect.height / 2);
+          
+          translateX -= dx * (factor - 1);
+          translateY -= dy * (factor - 1);
+          scale = newScale;
+          updateTransform();
+      }
+    });
+
+    // Drag Logic
+    lightboxImg.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      isDragging = true;
+      startX = e.clientX - translateX;
+      startY = e.clientY - translateY;
+      lightboxImg.style.transition = 'none'; // Disable transition for direct dragging
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      translateX = e.clientX - startX;
+      translateY = e.clientY - startY;
+      updateTransform();
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        lightboxImg.style.transition = 'transform 0.1s ease-out'; // Re-enable transition
+      }
+    });
+  </script>
