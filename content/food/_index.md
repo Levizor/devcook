@@ -1,3 +1,3 @@
 ---
-title: "Cooking posts"
+title: "Cooking"
 ---

@@ -1,3 +1,3 @@
 ---
-title: "Development posts"
+title: "Development"
 ---
