@@ -232,6 +232,7 @@
       max-height: 90%;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
       border-radius: 4px;
+      cursor: zoom-out;
     }
   </style>
 </head>
@@ -260,6 +261,7 @@
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
     const triggers = document.querySelectorAll(".lightbox-trigger");
+    let currentScale = 1;
 
     // Theme Toggle Logic
     const currentTheme = document.documentElement.getAttribute("data-theme");
@@ -282,23 +284,40 @@
         const fullUrl = e.target.getAttribute('data-full-url') || e.target.src;
         lightboxImg.src = fullUrl;
         lightboxImg.alt = e.target.alt;
+
+        currentScale = 1;
+        lightboxImg.style.transform = `scale(${currentScale})`;
+
         lightbox.classList.add('active');
         document.body.style.overflow = 'hidden'; // Prevent scrolling
       }
     });
 
-    lightbox.addEventListener('click', (e) => {
-      if (e.target !== lightboxImg) {
-        lightbox.classList.remove('active');
-        document.body.style.overflow = ''; // Restore scrolling
-      }
+    lightbox.addEventListener('click', () => {
+      lightbox.classList.remove('active');
+      document.body.style.overflow = ''; // Restore scrolling
+      currentScale = 1;
+      lightboxImg.style.transform = `scale(${currentScale})`;
     });
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && lightbox.classList.contains('active')) {
         lightbox.classList.remove('active');
         document.body.style.overflow = ''; // Restore scrolling
+        currentScale = 1;
+        lightboxImg.style.transform = `scale(${currentScale})`;
       }
+    });
+
+    lightbox.addEventListener('wheel', (e) => {
+      if (!lightbox.classList.contains('active')) return;
+      e.preventDefault();
+
+      const delta = e.deltaY * -0.002;
+      currentScale += delta;
+      currentScale = Math.min(Math.max(0.5, currentScale), 5); // Clamp scale between 0.5x and 5x
+
+      lightboxImg.style.transform = `scale(${currentScale})`;
     });
   </script>
 </body>
