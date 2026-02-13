@@ -1,0 +1,58 @@
+{{ $images := slice }}
+{{ $match := .Get "match" }}
+{{ $files := .Get "images" }}
+
+{{ if $match }}
+    {{ $images = $.Page.Resources.Match $match }}
+{{ else if $files }}
+    {{ range split $files "," }}
+        {{ $f := trim . " " }}
+        {{ with $.Page.Resources.GetMatch $f }}
+            {{ $images = $images | append . }}
+        {{ end }}
+    {{ end }}
+{{ else if gt (len .Params) 0 }}
+    {{ range .Params }}
+        {{ with $.Page.Resources.GetMatch . }}
+            {{ $images = $images | append . }}
+        {{ end }}
+    {{ end }}
+{{ end }}
+
+{{ $sizeInput := .Get "size" | default "200px" }}
+{{ $alignInput := .Get "align" | default "center" }}
+{{ $sizeStr := "200px" }}
+{{ $thumbSize := "200x200" }}
+
+{{ if eq $sizeInput "small" }}
+    {{ $sizeStr = "150px" }}
+    {{ $thumbSize = "150x150" }}
+{{ else if eq $sizeInput "medium" }}
+    {{ $sizeStr = "250px" }}
+    {{ $thumbSize = "250x250" }}
+{{ else if eq $sizeInput "large" }}
+    {{ $sizeStr = "400px" }}
+    {{ $thumbSize = "400x400" }}
+{{ else }}
+    {{ $sizeStr = $sizeInput }}
+    {{ $thumbSize = "300x300" }} 
+{{ end }}
+
+{{ $filter := printf "%s Smart" $thumbSize }}
+
+{{ if gt (len $images) 0 }}
+<div class="gallery" style="--gallery-item-min-width: {{ $sizeStr }}; --gallery-align: {{ $alignInput }};">
+    {{ range $images }}
+        {{ $thumb := .Fill $filter }}
+        <figure>
+            <img src="{{ $thumb.RelPermalink }}" 
+                 data-full-url="{{ .RelPermalink }}" 
+                 alt="{{ .Name }}" 
+                 loading="lazy" 
+                 class="lightbox-trigger"
+                 width="{{ $thumb.Width }}"
+                 height="{{ $thumb.Height }}">
+        </figure>
+    {{ end }}
+</div>
+{{ end }}

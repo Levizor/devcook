@@ -1,0 +1,6 @@
+<figure class="image-figure">
+  <img src="{{ .Destination | safeURL }}" alt="{{ .Text }}" {{ with .Title }} title="{{ . }}" {{ end }} loading="lazy" />
+  {{ if or .Title .Text }}
+  <figcaption>{{ with .Title }}{{ . | markdownify }}{{ else }}{{ .Text | markdownify }}{{ end }}</figcaption>
+  {{ end }}
+</figure>
