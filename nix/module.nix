@@ -116,9 +116,13 @@
                 port = cfg.port;
               }
             ];
+
+            extraConfig = ''
+              absolute_redirect off;
+              port_in_redirect off;
+            '';
           };
         };
       };
     };
 }
-
