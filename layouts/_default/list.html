@@ -228,7 +228,7 @@
       let visibleCount = 0;
       items.forEach(item => {
         const title = item.dataset.title;
-        const tags = item.dataset.tags ? item.dataset.tags.split(',') : [];
+        const tags = item.dataset.tags ? item.dataset.tags.split(',').map(t => t.trim()) : [];
 
         const matchesSearch = title.includes(searchTerm);
 
