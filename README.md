@@ -1,2 +1,2 @@
 # devcook
-My personal website to upload some weird stuff.
+My personal [website](https://nixlab.worm-chameleon.ts.net/) to upload some weird stuff.
