@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ .Title }} | {{ .Site.Title }}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script>
+    (function () {
+      const currentTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+      if (currentTheme) {
+        document.documentElement.setAttribute("data-theme", currentTheme);
+      } else if (prefersDark.matches) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+  <style>
+    :root {
+      --bg: #16181a;
+      --bg-alt: #1e2124;
+      --bg-highlight: #3c4048;
+      --fg: #ffffff;
+      --grey: #7b8496;
+      --green: #5eff6c;
+      --blue: #5ea1ff;
+      --cyan: #5ef1ff;
+      --red: #ff6e5e;
+      --yellow: #f1ff5e;
+      --magenta: #ff5ef1;
+      --pink: #ff5ea0;
+      --orange: #ffbd5e;
+      --purple: #bd5eff;
+    }
+
+    [data-theme="light"] {
+      --bg: #ffffff;
+      --bg-alt: #eaeaea;
+      --bg-highlight: #acacac;
+      --fg: #16181a;
+      --grey: #7b8496;
+      --blue: #0057d1;
+      --green: #008b0c;
+      --cyan: #008c99;
+      --red: #d11500;
+      --yellow: #997b00;
+      --magenta: #d100bf;
+      --pink: #f40064;
+      --orange: #d17c00;
+      --purple: #a018ff;
+    }
+
+    body {
+      font-size: 1.4em;
+      max-width: 60%;
+      margin: 40px auto;
+      padding: 0 10px;
+      font-family: monospace;
+      line-height: 1.6;
+      background-color: var(--bg);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    nav {
+      margin-bottom: 40px;
+      border-bottom: 1px solid var(--bg-highlight);
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+      min-height: 2.5em;
+    }
+
+    nav div {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    nav a {
+      margin-right: 15px;
+      text-decoration: none;
+      color: var(--grey);
+      font-weight: bold;
+    }
+
+    main a {
+      color: var(--orange);
+    }
+
+    main {
+      color: var(--fg);
+    }
+
+    h1 {
+      margin-bottom: 5px;
+    }
+
+    #theme-toggle {
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--fg);
+      font-family: monospace;
+      font-size: 1.3em;
+      padding: 0;
+      margin-left: auto;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .meta {
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 20px;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div>
+      <a href="/">Main</a>
+      <a href="/dev/">/dev</a>
+      <a href="/projects">/projects</a>
+      <a href="/food/">/food</a>
+      <button id="theme-toggle">Theme Switcher</button>
+    </div>
+  </nav>
+
+  <main>
+    {{ block "main" . }}{{ end }}
+  </main>
+
+  <script>
+    const toggleBtn = document.getElementById("theme-toggle");
+
+    const currentTheme = document.documentElement.getAttribute("data-theme");
+    toggleBtn.innerHTML = currentTheme === "dark" ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("theme", theme);
+      toggleBtn.innerHTML = theme === "dark" ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      let theme = document.documentElement.getAttribute("data-theme");
+      setTheme(theme === "light" ? "dark" : "light")
+    })
+  </script>
+</body>
+
+</html>

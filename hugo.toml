@@ -1,0 +1,16 @@
+title = "Levizor's website"
+
+baseURL = 'https://nixlab.worm-chameleon.ts.net'
+languageCode = 'en-us'
+[menu]
+[[menu.main]]
+identifier = "dev"
+name = "Dev"
+url = "/dev/"
+weight = 10
+
+[[menu.main]]
+identifier = "food"
+name = "Food"
+url = "/food/"
+weight = 20

@@ -1,0 +1,291 @@
+{{ define "main" }}
+<style>
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-bar input,
+  .filter-bar select {
+    padding: 8px 12px;
+    border: 1px solid var(--bg-highlight);
+    background-color: var(--bg-alt);
+    color: var(--fg);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .filter-bar input {
+    flex-grow: 1;
+    min-width: 200px;
+  }
+
+  .filter-bar select {
+    cursor: pointer;
+    min-width: 150px;
+  }
+
+  .filter-bar input:focus,
+  .filter-bar select:focus {
+    border-color: var(--blue);
+  }
+
+  .tag-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .tag-filter-btn {
+    cursor: pointer;
+    padding: 6px 12px;
+    border: 1px solid var(--bg-highlight);
+    border-radius: 4px;
+    background-color: var(--bg-alt);
+    color: var(--fg);
+    font-size: 0.85em;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .tag-filter-btn:hover {
+    border-color: var(--blue);
+  }
+
+  .tag-filter-btn.active {
+    background-color: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+    /* Ensure good contrast on active */
+  }
+
+  #post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .post-item {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--bg-highlight);
+    transition: background-color 0.2s;
+  }
+
+  .post-item:last-child {
+    border-bottom: none;
+  }
+
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .post-title {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: var(--fg);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .post-title:hover {
+    color: var(--blue);
+  }
+
+  .post-date {
+    font-size: 0.9em;
+    color: var(--grey);
+    white-space: nowrap;
+    font-family: monospace;
+  }
+
+  .post-description {
+    margin-top: 10px;
+    font-size: 0.95em;
+    color: var(--grey);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .post-tags {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .tag {
+    display: inline-block;
+    color: var(--cyan);
+    font-size: 0.8em;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+
+  .tag:hover {
+    opacity: 1;
+    color: var(--blue);
+  }
+
+  .no-results {
+    padding: 20px;
+    text-align: center;
+    color: var(--grey);
+    font-style: italic;
+    display: none;
+  }
+</style>
+
+<h1>{{ .Title }}</h1>
+
+<div class="filter-bar">
+  <input type="text" id="search-input" placeholder="Search pages...">
+
+  <select id="sort-select">
+    <option value="date-desc">Newest First</option>
+    <option value="date-asc">Oldest First</option>
+    <option value="title-asc">Title (A-Z)</option>
+    <option value="title-desc">Title (Z-A)</option>
+  </select>
+</div>
+
+<div class="tag-filters" id="tag-filters">
+  {{ $tags := slice }}
+  {{ range .Pages }}
+  {{ range .Params.tags }}
+  {{ $tags = $tags | append . }}
+  {{ end }}
+  {{ end }}
+  {{ range ($tags | uniq | sort) }}
+  <div class="tag-filter-btn" data-tag="{{ . | lower }}">{{ . }}</div>
+  {{ end }}
+</div>
+
+<ul id="post-list">
+  {{ range .Pages }}
+  <li class="post-item" data-title="{{ .Title | lower }}" data-date="{{ .Date.Unix }}"
+    data-tags="{{ with .Params.tags }}{{ delimit . " ," | lower }}{{ end }}">
+
+    <div class="post-header">
+      <a href="{{ .RelPermalink }}" class="post-title">{{ .Title }}</a>
+      <span class="post-date">{{ .Date.Format "Jan 02, 2006" }}</span>
+    </div>
+
+    <div class="post-description">
+      {{ if .Params.description }}
+      {{ .Params.description }}
+      {{ else }}
+      {{ .Summary | plainify }}
+      {{ end }}
+    </div>
+
+    {{ if .Params.tags }}
+    <div class="post-tags">
+      {{ range .Params.tags }}
+      <span class="tag">#{{ . }}</span>
+      {{ end }}
+    </div>
+    {{ end }}
+  </li>
+  {{ end }}
+</ul>
+
+<div id="no-results" class="no-results">No posts found matching your criteria.</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('search-input');
+    const sortSelect = document.getElementById('sort-select');
+    const tagFilters = document.getElementById('tag-filters');
+    const tagBtns = Array.from(tagFilters.getElementsByClassName('tag-filter-btn'));
+    const postList = document.getElementById('post-list');
+    const items = Array.from(postList.getElementsByClassName('post-item'));
+    const noResults = document.getElementById('no-results');
+
+    let selectedTags = new Set();
+
+    function filterAndSort() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const sortValue = sortSelect.value;
+
+      let visibleCount = 0;
+      items.forEach(item => {
+        const title = item.dataset.title;
+        const tags = item.dataset.tags ? item.dataset.tags.split(',') : [];
+
+        const matchesSearch = title.includes(searchTerm);
+
+        let matchesTags = true;
+        if (selectedTags.size > 0) {
+          for (let tag of selectedTags) {
+            if (!tags.includes(tag)) {
+              matchesTags = false;
+              break;
+            }
+          }
+        }
+
+        if (matchesSearch && matchesTags) {
+          item.style.display = 'flex';
+          visibleCount++;
+        } else {
+          item.style.display = 'none';
+        }
+      });
+
+      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+
+      const visibleItems = items.filter(item => item.style.display !== 'none');
+
+      visibleItems.sort((a, b) => {
+        if (sortValue === 'date-desc') {
+          return b.dataset.date - a.dataset.date;
+        } else if (sortValue === 'date-asc') {
+          return a.dataset.date - b.dataset.date;
+        } else if (sortValue === 'title-asc') {
+          return a.dataset.title.localeCompare(b.dataset.title);
+        } else if (sortValue === 'title-desc') {
+          return b.dataset.title.localeCompare(a.dataset.title);
+        }
+        return 0;
+      });
+
+      visibleItems.forEach(item => postList.appendChild(item));
+    }
+
+    searchInput.addEventListener('input', filterAndSort);
+    sortSelect.addEventListener('change', filterAndSort);
+
+    tagBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tag = btn.dataset.tag;
+        if (selectedTags.has(tag)) {
+          selectedTags.delete(tag);
+          btn.classList.remove('active');
+        } else {
+          selectedTags.add(tag);
+          btn.classList.add('active');
+        }
+        filterAndSort();
+      });
+    });
+  });
+</script>
+{{ end }}
