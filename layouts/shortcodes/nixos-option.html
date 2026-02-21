@@ -1,0 +1,137 @@
+<div class="nixos-option-card">
+  <div class="header">
+    <a href="#{{ .Get " name" | urlize }}" id="{{ .Get " name" | urlize }}">
+      {{ .Get "name" }}
+    </a>
+  </div>
+  <div class="body">
+    {{ with .Get "type" }}
+    <div class="row">
+      <span class="label">Type:</span>
+      <span class="value type">{{ . | markdownify }}</span>
+    </div>
+    {{ end }}
+
+    {{ with .Get "default" }}
+    <div class="row">
+      <span class="label">Default:</span>
+      <span class="value default">
+        <code>{{ . }}</code>
+      </span>
+    </div>
+    {{ end }}
+
+    {{ with .Get "example" }}
+    <div class="row">
+      <span class="label">Example:</span>
+      <span class="value example">
+        <code>{{ . }}</code>
+      </span>
+    </div>
+    {{ end }}
+
+    {{ if or (.Get "declared_in") (.Get "source") }}
+    <div class="row">
+      <span class="label">Declared in:</span>
+      <span class="value source">
+        <a href="{{ .Get " source" }}" target="_blank" rel="noopener noreferrer">
+          {{ .Get "declared_in" | default "Source" }}
+        </a>
+      </span>
+    </div>
+    {{ end }}
+
+    <div class="description">
+      {{ .Inner | markdownify }}
+    </div>
+  </div>
+</div>
+
+<style>
+  .nixos-option-card {
+    border: 1px solid var(--bg-highlight);
+    border-radius: 6px;
+    background-color: var(--bg-alt);
+    margin: 1.5em 0;
+    overflow: hidden;
+    font-family: 'Open Sans', sans-serif;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .nixos-option-card .header {
+    background-color: var(--bg-highlight);
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--bg-highlight);
+  }
+
+  .nixos-option-card .header a {
+    font-family: monospace;
+    font-weight: bold;
+    color: var(--fg);
+    text-decoration: none;
+    font-size: 1.1em;
+    display: block;
+  }
+
+  .nixos-option-card .header a:hover {
+    text-decoration: underline;
+  }
+
+  .nixos-option-card .body {
+    padding: 15px;
+  }
+
+  .nixos-option-card .row {
+    display: flex;
+    margin-bottom: 8px;
+    align-items: baseline;
+  }
+
+  .nixos-option-card .label {
+    font-weight: 600;
+    color: var(--grey);
+    width: 100px;
+    /* Fixed width for labels */
+    flex-shrink: 0;
+    font-size: 0.9em;
+  }
+
+  .nixos-option-card .value {
+    color: var(--fg);
+    word-break: break-all;
+  }
+
+  .nixos-option-card .value code {
+    background-color: var(--bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+    color: var(--fg);
+  }
+
+  .nixos-option-card .value.source a {
+    color: var(--blue);
+    text-decoration: none;
+  }
+
+  .nixos-option-card .value.source a:hover {
+    text-decoration: underline;
+  }
+
+  .nixos-option-card .description {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--bg-highlight);
+    color: var(--fg);
+    line-height: 1.5;
+  }
+
+  .nixos-option-card .description p {
+    margin: 0 0 10px;
+  }
+
+  .nixos-option-card .description p:last-child {
+    margin-bottom: 0;
+  }
+</style>
