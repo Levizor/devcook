@@ -290,5 +290,183 @@
       font-style: italic;
       display: none;
     }
+
+    /* Code Block Styles */
+    pre {
+      background-color: var(--bg-alt);
+      color: var(--fg);
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      border: 1px solid var(--bg-highlight);
+      margin: 20px 0;
+      max-width: 100%;
+    }
+
+    code {
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+
+    /* Inline Code Styling */
+    :not(pre)>code {
+      background-color: var(--bg-alt);
+      color: var(--magenta);
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 1px solid var(--bg-highlight);
+    }
+
+    /* Syntax Highlighting */
+    .chroma .c,
+    .chroma .ch,
+    .chroma .cm,
+    .chroma .cp,
+    .chroma .cpf,
+    .chroma .c1,
+    .chroma .cs {
+      color: var(--grey);
+    }
+
+    .chroma .k,
+    .chroma .kd,
+    .chroma .kn,
+    .chroma .kp,
+    .chroma .kr {
+      color: var(--purple);
+    }
+
+    .chroma .kt {
+      color: var(--yellow);
+    }
+
+    .chroma .n {
+      color: var(--fg);
+    }
+
+    .chroma .nc {
+      color: var(--yellow);
+    }
+
+    .chroma .no {
+      color: var(--orange);
+    }
+
+    .chroma .nd {
+      color: var(--blue);
+    }
+
+    .chroma .ne {
+      color: var(--red);
+    }
+
+    .chroma .nf {
+      color: var(--blue);
+    }
+
+    .chroma .nt {
+      color: var(--red);
+    }
+
+    .chroma .nv {
+      color: var(--fg);
+    }
+
+    .chroma .s,
+    .chroma .sa,
+    .chroma .sb,
+    .chroma .sc,
+    .chroma .dl,
+    .chroma .s2,
+    .chroma .sh,
+    .chroma .sx,
+    .chroma .s1 {
+      color: var(--green);
+    }
+
+    .chroma .sd {
+      color: var(--grey);
+    }
+
+    .chroma .se {
+      color: var(--orange);
+    }
+
+    .chroma .si {
+      color: var(--orange);
+    }
+
+    .chroma .sr {
+      color: var(--green);
+    }
+
+    .chroma .ss {
+      color: var(--cyan);
+    }
+
+    .chroma .m,
+    .chroma .mb,
+    .chroma .mf,
+    .chroma .mh,
+    .chroma .mi,
+    .chroma .il,
+    .chroma .mo {
+      color: var(--cyan);
+    }
+
+    .chroma .o,
+    .chroma .ow {
+      color: var(--pink);
+    }
+
+    .chroma .p {
+      color: var(--fg);
+    }
+
+    .chroma .gd {
+      color: var(--red);
+    }
+
+    .chroma .ge {
+      font-style: italic;
+    }
+
+    .chroma .gr {
+      color: var(--red);
+    }
+
+    .chroma .gh {
+      color: var(--blue);
+      font-weight: bold;
+    }
+
+    .chroma .gi {
+      color: var(--green);
+    }
+
+    .chroma .go {
+      color: var(--fg);
+    }
+
+    .chroma .gp {
+      color: var(--grey);
+    }
+
+    .chroma .gs {
+      font-weight: bold;
+    }
+
+    .chroma .gu {
+      color: var(--blue);
+      font-weight: bold;
+    }
+
+    .chroma .gt {
+      color: var(--red);
+    }
+
+    .chroma {
+      background-color: transparent !important;
+    }
   </style>
 </head>
